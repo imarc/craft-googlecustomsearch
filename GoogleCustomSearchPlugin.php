@@ -22,4 +22,17 @@ class GoogleCustomSearchPlugin extends BasePlugin
 	{
 		return 'http://www.imarc.net';
 	}
+
+	function defineSettings()
+	{
+		return [
+			'searchEngineId' => [AttributeType::String, 'default' => ''],
+			'apiKey' => [AttributeType::String, 'default' => '']
+		];
+	}
+
+	public function getSettingsHtml()
+	{
+		return craft()->templates->render('googlecustomsearch/_settings', ['settings' => $this->getSettings()]);
+	}
 }
