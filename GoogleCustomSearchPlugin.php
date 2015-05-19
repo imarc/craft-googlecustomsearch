@@ -3,36 +3,37 @@ namespace Craft;
 
 class GoogleCustomSearchPlugin extends BasePlugin
 {
-	function getName()
-	{
-		return 'Google Custom Search';
-	}
+    function getName()
+    {
+        return 'Google Custom Search';
+    }
 
-	function getVersion()
-	{
-		return '0.1';
-	}
+    function getVersion()
+    {
+        return '1.0.0';
+    }
 
-	function getDeveloper()
-	{
-		return 'iMarc';
-	}
+    function getDeveloper()
+    {
+        return 'iMarc';
+    }
 
-	function getDeveloperUrl()
-	{
-		return 'http://www.imarc.net';
-	}
+    function getDeveloperUrl()
+    {
+        return 'http://www.imarc.net';
+    }
 
-	function defineSettings()
-	{
-		return [
-			'searchEngineId' => [AttributeType::String, 'default' => ''],
-			'apiKey' => [AttributeType::String, 'default' => '']
-		];
-	}
+    function defineSettings()
+    {
+        return [
+            'searchEngineId' => [AttributeType::String, 'default' => ''],
+            'apiKey' => [AttributeType::String, 'default' => '']
+        ];
+    }
 
-	public function getSettingsHtml()
-	{
-		return craft()->templates->render('googlecustomsearch/_settings', ['settings' => $this->getSettings()]);
-	}
+    public function getSettingsHtml()
+    {
+        craft()->templates->includeJsResource('googlecustomsearch/js/settings.js');
+        return craft()->templates->render('googlecustomsearch/_settings', ['settings' => $this->getSettings()]);
+    }
 }
