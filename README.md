@@ -25,7 +25,7 @@ If you're using a paid tier, you can find your API key in the [Control Panel](ht
 Usage
 -----
 
-In your twig template, retrieve search results from Google by passing it search keywords, which you can then iterate over to display:
+In your twig template, retrieve search results from Google by passing it your search query, which you can then iterate over to display:
 
 ```(twig)
 {% set response = craft.googleCustomSearch.performSearch(query) %}
