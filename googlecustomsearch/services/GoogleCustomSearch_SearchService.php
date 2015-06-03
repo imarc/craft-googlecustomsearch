@@ -124,7 +124,7 @@ class GoogleCustomSearch_SearchService extends BaseApplicationComponent
         if (!$response) {
             $result = array(
                 'success' => false,
-                'error' => 'No response'
+                'error' => Craft::t('No response')
             );
         } elseif (isset($response->error)) {
             $result = array(
