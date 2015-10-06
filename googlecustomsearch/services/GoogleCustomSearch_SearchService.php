@@ -20,7 +20,7 @@ class GoogleCustomSearch_SearchService extends BaseApplicationComponent
             ),
             $params
         );
-        
+
         $context = stream_context_create(array(
             'http' => array(
                 'ignore_errors' => true
@@ -61,7 +61,7 @@ class GoogleCustomSearch_SearchService extends BaseApplicationComponent
     {
         // Google only allows 10 results at a time
         $per_page = ($per_page > 10) ? 10 : $per_page;
-        
+
         $params = array(
             'q' => $terms,
             'start' => (($page - 1) * $per_page) + 1,
@@ -76,21 +76,20 @@ class GoogleCustomSearch_SearchService extends BaseApplicationComponent
         if (isset($response->error)) {
             throw new \Exception($response->error->message);
         }
-        
+
         $request_info = $response->queries->request[0];
-        
+
         $results = new \stdClass();
         $results->page = $page;
         $results->perPage = $per_page;
         $results->start = $request_info->startIndex;
         $results->end = ($request_info->startIndex + $request_info->count) - 1;
-        
-        /* Google allows only 100 results to be fetched for a search query over the API
-        , so we cap the totalResults to 100 if it exceeds that number */
+        $results->totalResults = $request_info->totalResults;
+
+        // Google allows only 100 results to be fetched for a search query over the API
+        // so we cap the totalResults to 100 if it exceeds that number
         if ($request_info->totalResults > 100) {
-            $results->totalResults = 100; 
-        } else {
-            $results->totalResults = $request_info->totalResults;    
+            $results->totalResults = 100;
         }
 
         $results->results = array();
@@ -105,9 +104,9 @@ class GoogleCustomSearch_SearchService extends BaseApplicationComponent
                     'image' => isset($result->pagemap->cse_image) ? $result->pagemap->cse_image[0]->src : '',
                     'thumbnail' => isset($result->pagemap->cse_thumbnail) ? $result->pagemap->cse_thumbnail[0]->src : '',
                 );
-            }   
+            }
         }
-        
+
         return $results;
     }
 
@@ -140,7 +139,7 @@ class GoogleCustomSearch_SearchService extends BaseApplicationComponent
                 'error' => $response->error->code . ' - ' . $response->error->message
             );
         }
-       
+
         return $result;
     }
 }
