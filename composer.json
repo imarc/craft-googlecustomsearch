@@ -2,8 +2,8 @@
     "name": "imarc/craft-googlecustomsearch",
     "description": "A Craft plugin for integrating with Google's Custom Search (and Google's Site Search.)",
     "homepage": "https://github.com/imarc/craft-googlecustomsearch",
-    "version": "1.0.0",
-    "type": "library",
+    "version": "1.0.2",
+    "type": "craft-plugin",
     "license": "Apache",
     "authors": [
         {
@@ -11,5 +11,7 @@
             "email": "dan@imarc.com"
         }
     ],
-    "require": {}
+    "require": {
+        "composer/installers": "~1.0"
+    }
 }
