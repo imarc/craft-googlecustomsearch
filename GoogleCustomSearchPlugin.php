@@ -1,33 +1,41 @@
 <?php
+/**
+ * @copyright 2016 Imarc LLC
+ * @license Apache (see LICENSE file)
+ */
 namespace Craft;
 
+/**
+ * GoogleCustomSearchPlugin is a Craft plugin for using Google Custom Search
+ * (and Google Site Search) on Craft sites.
+ */
 class GoogleCustomSearchPlugin extends BasePlugin
 {
-    function getName()
+    public function getName()
     {
         return 'Google Custom Search';
     }
 
-    function getVersion()
+    public function getVersion()
     {
         return '1.0.0';
     }
 
-    function getDeveloper()
+    public function getDeveloper()
     {
-        return 'iMarc';
+        return 'Imarc';
     }
 
-    function getDeveloperUrl()
+    public function getDeveloperUrl()
     {
-        return 'http://www.imarc.net';
+        return 'https://www.imarc.com';
     }
 
-    function defineSettings()
+    public function defineSettings()
     {
         return [
             'searchEngineId' => [AttributeType::String, 'default' => ''],
-            'apiKey' => [AttributeType::String, 'default' => '']
+            'apiKey' => [AttributeType::String, 'default' => ''],
         ];
     }
 
