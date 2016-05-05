@@ -34,14 +34,14 @@ class GoogleCustomSearchPlugin extends BasePlugin
     public function defineSettings()
     {
         return [
-            'searchEngineId' => [AttributeType::String, 'default' => ''],
-            'apiKey' => [AttributeType::String, 'default' => ''],
+            'searchEngineId' => array(AttributeType::String, 'default' => ''),
+            'apiKey' => array(AttributeType::String, 'default' => ''),
         ];
     }
 
     public function getSettingsHtml()
     {
         craft()->templates->includeJsResource('googlecustomsearch/js/settings.js');
-        return craft()->templates->render('googlecustomsearch/_settings', ['settings' => $this->getSettings()]);
+        return craft()->templates->render('googlecustomsearch/_settings', array('settings' => $this->getSettings()));
     }
 }
