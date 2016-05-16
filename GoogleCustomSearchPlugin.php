@@ -33,10 +33,10 @@ class GoogleCustomSearchPlugin extends BasePlugin
 
     public function defineSettings()
     {
-        return [
+        return array(
             'searchEngineId' => array(AttributeType::String, 'default' => ''),
             'apiKey' => array(AttributeType::String, 'default' => ''),
-        ];
+        );
     }
 
     public function getSettingsHtml()
