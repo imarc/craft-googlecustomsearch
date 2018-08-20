@@ -47,7 +47,7 @@ return [
 In your twig template, retrieve search results from Google by passing it your search query, which you can then iterate over to display:
 
 ```(twig)
-{% set response = craft.googleCustomSearch.performSearch(query) %}
+{% set response = craft.googlecustomsearch.performSearch('google') %}
 ```
 
 Here is a complete example with pagination:
@@ -60,7 +60,7 @@ Here is a complete example with pagination:
 {% set title = "Search" %}
 
 {% if query %}
-	{% set response = craft.googleCustomSearch.performSearch(query, page) %}
+	{% set response = craft.googlecustomsearch.performSearch(query, page) %}
 	{% set title = query ~ " - Search" %}
 	{% set totalPages = ceil(response.totalResults / response.perPage) %}
 {% endif %}
