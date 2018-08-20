@@ -4,7 +4,7 @@ A Craft CMS plugin that incorporates a Google Custom Search into your website.
 
 Google offers [free](https://cse.google.com/cse) and [paid](https://www.google.com/work/search/products/gss.html) tiers for accessing their search results.
 
-*If you are looking for the Craft 2 version. [See the `craft2` branch.](https://github.com/imarc/craft-googlecustomsearch/tree/craft2)*
+*If you are looking for the Craft 2 version of this plugin, [see the `craft2` branch.](https://github.com/imarc/craft-googlecustomsearch/tree/craft2)*
 
 ## Requirements
 
@@ -30,8 +30,7 @@ You will need a **Search Engine ID** and **API Key** from Google.
 
 **Search Engine ID** - On the [Custom Search Engine Control Panel](http://www.google.com/cse/manage/all), create a new search engine for the site you would like to integrate. Once created, you can retrieve your Search Engine ID from the *Setup* tab.
 
-**API Key** - **If you're using the free tier**, visit the [Google Developers Console](https://console.developers.google.com) and create a project for your search engine. Within your project, you’ll need to enable the *Custom Search API* from the *APIs* tab. Finally, on the *Credentials* tab, you will need to create a Public API access key by selecting the *Create new Key* option and choosing *Server key*. The API Key will now be available.  
-**If you're using a paid tier**, you can find your API key in the [Control Panel](http://www.google.com/cse/manage/all) in the *Business > XML & JSON* tab.
+**API Key** - **If you're using the free tier**, visit the [Google Developers Console](https://console.developers.google.com) and create a project for your search engine. Within your project, you’ll need to enable the *Custom Search API* from the *APIs* tab. Finally, on the *Credentials* tab, you will need to create a Public API access key by selecting the *Create new Key* option and choosing *Server key*. The API Key will now be available. **If you're using a paid tier**, you can find your API key in the [Control Panel](http://www.google.com/cse/manage/all) in the *Business > XML & JSON* tab.
 
 The credentials can either be added from Craft's plugin settings or within `config/googlecustomsearch.php`.
 
