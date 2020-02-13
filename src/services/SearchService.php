@@ -116,11 +116,11 @@ class SearchService extends Component
         $results->perPage = $per_page;
         $results->start = $request_info->startIndex;
         $results->end = ($request_info->startIndex + $request_info->count) - 1;
-        $results->totalResults = $request_info->totalResults;
+        $results->totalResults = $request_info->totalResults ?? 0;
 
         // Google allows only 100 results to be fetched for a search query over the API
         // so we cap the totalResults to 100 if it exceeds that number
-        if ($request_info->totalResults > 100) {
+        if ($results->totalResults > 100) {
             $results->totalResults = 100;
         }
 
