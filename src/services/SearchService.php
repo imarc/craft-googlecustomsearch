@@ -120,8 +120,6 @@ class SearchService extends Component
 
         // Google allows only 100 results to be fetched for a search query over the API
         // so we cap the totalResults to 100 if it exceeds that number
-
-
         if (isset($request_info->totalResults) && $request_info->totalResults > 100) {
             $results->totalResults = 100;
         }
