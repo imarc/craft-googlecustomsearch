@@ -1,3 +1,4 @@
+information craft-googlecustomsearch
 # Google Custom Search plugin for Craft CMS 3.x
 
 A Craft CMS plugin that incorporates a Google Custom Search into your website.
