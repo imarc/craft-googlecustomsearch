@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2018 Jeff Turcotte
  */
 
-namespace imarc\googlecustomsearch\assetbundles\Googlecustomsearch;
+namespace imarc\googlecustomsearch\assetbundles\googlecustomsearch;
 
 use Craft;
 use craft\web\AssetBundle;
