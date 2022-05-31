@@ -40,8 +40,6 @@ use yii\base\Event;
  */
 class Plugin extends BasePlugin
 {
-    public string $schemaVersion = '2.0.0';
-
     public $controllerMap = [
         'connection' => ConnectionController::class,
     ];
