@@ -10,7 +10,7 @@ class Settings extends Model
     public $apiKey = '';
     public $searchEngineId = '';
 
-    public function rules()
+    public function rules(): array
     {
         return [
             ['searchEngineId', 'string'],

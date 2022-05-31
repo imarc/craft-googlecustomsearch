@@ -11,11 +11,8 @@
 namespace imarc\googlecustomsearch;
 
 use Craft;
+use craft\base\Model;
 use craft\base\Plugin as BasePlugin;
-use craft\events\PluginEvent;
-use craft\events\RegisterUrlRulesEvent;
-use craft\services\Plugins as PluginsService;
-use craft\web\UrlManager;
 use craft\web\twig\variables\CraftVariable;
 use imarc\googlecustomsearch\models\Settings;
 use imarc\googlecustomsearch\controllers\ConnectionController;
@@ -43,7 +40,7 @@ use yii\base\Event;
  */
 class Plugin extends BasePlugin
 {
-    public $schemaVersion = '2.0.0';
+    public string $schemaVersion = '2.0.0';
 
     public $controllerMap = [
         'connection' => ConnectionController::class,
@@ -67,12 +64,12 @@ class Plugin extends BasePlugin
         );
     }
 
-    protected function createSettingsModel()
+    protected function createSettingsModel(): ?Model
     {
         return new Settings();
     }
 
-    protected function settingsHtml(): string
+    protected function settingsHtml(): ?string
     {
         return Craft::$app->view->renderTemplate(
             'googlecustomsearch/settings',
