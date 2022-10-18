@@ -130,8 +130,8 @@ class SearchService extends Component
             foreach ($response->items as $result) {
                 $results->results[] = (object) array(
                     'title' => $result->title,
-                    'snippet' => $result->snippet,
-                    'htmlSnippet' => $result->htmlSnippet,
+                    'snippet' => $result->snippet ?? '',
+                    'htmlSnippet' => $result->htmlSnippet ?? '',
                     'link' => $result->link,
                     'image' => (isset($result->pagemap->cse_image) && isset($result->pagemap->cse_image[0]) && isset($result->pagemap->cse_image[0]->src)) ? $result->pagemap->cse_image[0]->src : '',
                     'thumbnail' => (isset($result->pagemap->cse_thumbnail) && isset($result->pagemap->cse_thumbnail[0]) && isset($result->pagemap->cse_thumbnail[0]->src)) ? $result->pagemap->cse_thumbnail[0]->src : '',
