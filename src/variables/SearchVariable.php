@@ -54,6 +54,6 @@ class SearchVariable
     
     public function setThrowOnFailure(bool $throwOnFailure): bool
     {
-        return Plugin::getInstance()->search->performSearch($throwOnFailure);
+        return Plugin::getInstance()->search->setThrowOnFailure($throwOnFailure);
     }
 }
