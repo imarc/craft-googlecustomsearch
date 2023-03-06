@@ -30,6 +30,24 @@ use craft\base\Component;
  */
 class SearchService extends Component
 {
+    private $throwOnFailure = true;
+
+    /**
+     * Sets the value
+     *
+     * @param array params The parameters of the search request
+     * @return object The raw results of the search request
+     **/
+    public function setThrowOnFailure(bool $throwOnFailure): bool
+    {
+        return $this->throwOnFailure = $throwOnFailure;
+    }
+
+    public function getThrowOnFailure(): bool
+    {
+        return $this->throwOnFailure;
+    }
+
     /**
      * Sends search request to Google
      *
@@ -106,7 +124,10 @@ class SearchService extends Component
         $response = $this->request($params);
 
         if (isset($response->error)) {
-            throw new \Exception($response->error->message);
+            if ($this->throwOnFailure) {
+                throw new \Exception($response->error->message);
+            }
+            return $response;
         }
 
         $request_info = $response->queries->request[0];
