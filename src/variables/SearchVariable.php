@@ -49,5 +49,11 @@ class SearchVariable
     public function performSearch($terms, $page=1, $per_page=10, $extra=array())
     {
         return Plugin::getInstance()->search->performSearch($terms, $page, $per_page, $extra);
+
+    }
+    
+    public function setThrowOnFailure(bool $throwOnFailure): bool
+    {
+        return Plugin::getInstance()->search->performSearch($throwOnFailure);
     }
 }
