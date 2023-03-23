@@ -14,6 +14,7 @@ use imarc\googlecustomsearch\Plugin;
 
 use Craft;
 use craft\base\Component;
+use samdark\log\PsrMessage;
 
 /**
  * SearchService Service
@@ -127,6 +128,14 @@ class SearchService extends Component
             if ($this->throwOnFailure) {
                 throw new \Exception($response->error->message);
             }
+            Craft::error(
+                Craft::t(
+                    'craft-googlecustomsearch',
+                    'Google Search API returned error: {error}',
+                    ['error' => $response->error->message]
+                ),
+                __METHOD__
+            );
             return $response;
         }
 
