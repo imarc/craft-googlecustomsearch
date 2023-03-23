@@ -128,12 +128,8 @@ class SearchService extends Component
             if ($this->throwOnFailure) {
                 throw new \Exception($response->error->message);
             }
-            Craft::error(
-                Craft::t(
-                    'craft-googlecustomsearch',
-                    'Google Search API returned error: {error}',
-                    ['error' => $response->error->message]
-                ),
+            Craft::warning(
+                'Google Search API returned error: ' . $response->error->message,
                 __METHOD__
             );
             return $response;
