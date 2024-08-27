@@ -43,7 +43,7 @@ class Plugin extends BasePlugin
     
     public string $schemaVersion = '1.0.0';
 
-    public array $controllerMap = [
+    public $controllerMap = [
         'connection' => ConnectionController::class,
     ];
 
