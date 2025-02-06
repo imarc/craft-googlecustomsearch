@@ -19,7 +19,7 @@ use samdark\log\PsrMessage;
 /**
  * SearchService Service
  *
- * All of your plugin’s business logic should go in services, including saving data,
+ * All of your plugin's business logic should go in services, including saving data,
  * retrieving data, etc. They provide APIs that your controllers, template variables,
  * and other plugins can interact with.
  *
@@ -61,25 +61,38 @@ class SearchService extends Component
 
         $params = array_merge(
             [
-                'key' => $settings->apiKey,
-                'cx' => $settings->searchEngineId
+                'key' => $settings->getApiKey(),
+                'cx' => $settings->getSearchEngineId()
             ],
             $params
         );
 
-        $context = stream_context_create(array(
-            'http' => array(
-                'ignore_errors' => true
-            )
-        ));
+        $client = Craft::createGuzzleClient([
+            'headers' => [
+                'Referer' => Craft::$app->getRequest()->getHostInfo()
+            ]
+        ]);
 
-        return json_decode(
-            file_get_contents(
-                'https://www.googleapis.com/customsearch/v1?' . http_build_query($params),
-                false,
-                $context
-            )
-        );
+        try {
+            $response = $client->get('https://www.googleapis.com/customsearch/v1', [
+                'query' => $params
+            ]);
+
+            return json_decode($response->getBody());
+        } catch (\Throwable $e) {
+            // Return the error response if possible
+            if ($e instanceof \GuzzleHttp\Exception\ClientException) {
+                return json_decode($e->getResponse()->getBody());
+            }
+            
+            // Create a similar error structure to what Google would return
+            return (object) [
+                'error' => (object) [
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage()
+                ]
+            ];
+        }
     }
 
     /**
@@ -178,8 +191,8 @@ class SearchService extends Component
         $settings = Plugin::getInstance()->getSettings();
 
         $response = $this->request([
-            'cx' => $settings->searchEngineId,
-            'key' => $settings->apiKey,
+            'cx' => $settings->getSearchEngineId(),
+            'key' => $settings->getApiKey(),
             'q' => '',
         ]);
 
