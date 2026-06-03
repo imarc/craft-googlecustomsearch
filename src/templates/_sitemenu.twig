@@ -1,0 +1,37 @@
+{% set siteIds = siteIds ?? craft.app.sites.getEditableSiteIds() %}
+{% if siteIds|length > 1 %}
+    {% set groups = craft.app.sites.getAllGroups() %}
+
+    <div class="field">
+        <div class="heading">
+            <label>{{ 'Site'|t('app') }}</label>
+        </div>
+        <div class="input ltr">
+            <div class="select fullwidth">
+                <select id="site-select" onchange="window.location = this.value;">
+                    {% for group in groups %}
+                        {% set groupSiteIds = group.getSiteIds()|intersect(siteIds) %}
+                        {% if groupSiteIds %}
+                            {% if groups|length > 1 %}
+                                <optgroup label="{{ group.name|t('site') }}">
+                            {% endif %}
+                            {% for siteId in groupSiteIds %}
+                                {% set optionSite = craft.app.sites.getSiteById(siteId) %}
+                                {% set optionUrl = url(urlFormat|replace({
+                                    '{id}': siteId,
+                                    '{handle}': optionSite.handle,
+                                })) %}
+                                <option value="{{ optionUrl }}"{% if siteId == selectedSiteId %} selected{% endif %}>
+                                    {{ optionSite.name|t('site') }}
+                                </option>
+                            {% endfor %}
+                            {% if groups|length > 1 %}
+                                </optgroup>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+{% endif %}

@@ -1,4 +1,4 @@
-# Google Custom Search plugin for Craft CMS 3.x
+# Google Custom Search plugin for Craft CMS
 
 A Craft CMS plugin that incorporates a Google Custom Search into your website.
 
@@ -8,7 +8,7 @@ Google offers [free](https://cse.google.com/cse) and [paid](https://www.google.c
 
 ## Requirements
 
-This plugin requires Craft CMS 3.0.0 or later.
+This plugin requires Craft CMS 3.0.0, 4.x, or 5.x and PHP 8.0+ (PHP 8.2+ recommended for Craft 5).
 
 ## Installation
 
@@ -34,11 +34,51 @@ You will need a **Search Engine ID** and **API Key** from Google.
 
 The credentials can either be added from Craft's plugin settings or within `config/googlecustomsearch.php`.
 
-```(php)
+On multisite installs, plugin settings can be configured per site from **Settings → Plugins → Google Custom Search**. Use the site menu to switch between sites.
+
+### Config file
+
+Single-site (or shared credentials):
+
+```php
 <?php
 return [
-    "apiKey" => getenv('GOOGLE_SEARCH_API_KEY'),
-    "searchEngineId" => getenv('GOOGLE_SEARCH_ENGINE_ID'),
+    'apiKey' => getenv('GOOGLE_SEARCH_API_KEY'),
+    'searchEngineId' => getenv('GOOGLE_SEARCH_ENGINE_ID'),
+];
+```
+
+Multisite — per-site values in the config file (keys are site handles):
+
+```php
+<?php
+return [
+    'siteSettings' => [
+        'default' => [
+            'apiKey' => getenv('GOOGLE_SEARCH_API_KEY'),
+            'searchEngineId' => getenv('GOOGLE_SEARCH_ENGINE_ID'),
+        ],
+        'fr' => [
+            'apiKey' => getenv('GOOGLE_SEARCH_API_KEY_FR'),
+            'searchEngineId' => getenv('GOOGLE_SEARCH_ENGINE_ID_FR'),
+        ],
+    ],
+];
+```
+
+You can also index top-level keys by site handle; Craft will resolve them for the current site:
+
+```php
+<?php
+return [
+    'apiKey' => [
+        'default' => getenv('GOOGLE_SEARCH_API_KEY'),
+        'fr' => getenv('GOOGLE_SEARCH_API_KEY_FR'),
+    ],
+    'searchEngineId' => [
+        'default' => getenv('GOOGLE_SEARCH_ENGINE_ID'),
+        'fr' => getenv('GOOGLE_SEARCH_ENGINE_ID_FR'),
+    ],
 ];
 ```
 
