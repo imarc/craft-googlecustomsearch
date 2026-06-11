@@ -13,8 +13,10 @@ namespace imarc\googlecustomsearch;
 use Craft;
 use craft\base\Model;
 use craft\base\Plugin as BasePlugin;
+use craft\events\PluginEvent;
 use craft\helpers\Html;
 use craft\models\Site;
+use craft\services\Plugins;
 use craft\web\Controller;
 use craft\web\Response;
 use craft\web\twig\variables\CraftVariable;
@@ -62,6 +64,23 @@ class Plugin extends BasePlugin
                 $variable->set('googlecustomsearch', SearchVariable::class);
             }
         );
+
+        $handle = $this->handle;
+        Event::on(
+            Plugins::class,
+            Plugins::EVENT_AFTER_SAVE_PLUGIN_SETTINGS,
+            function (PluginEvent $event) use ($handle) {
+                if ($event->plugin->handle !== $handle) {
+                    return;
+                }
+
+                $siteSettings = $event->plugin->getSettings()->siteSettings;
+
+                if ($siteSettings !== []) {
+                    Settings::saveSiteSettings($handle, $siteSettings);
+                }
+            }
+        );
     }
 
     public function getSelectedSiteForSettings(): Site
@@ -84,23 +103,19 @@ class Plugin extends BasePlugin
     public function beforeSaveSettings(): bool
     {
         $posted = Craft::$app->getRequest()->getBodyParam('settings', []);
+        $site = $this->getSelectedSiteForSettings();
+        $settings = $this->getSettings();
 
-        if (!empty($posted['siteSettings'])) {
-            $stored = Craft::$app->getProjectConfig()->get(
-                'plugins.' . $this->handle . '.settings'
-            ) ?? [];
+        if (array_key_exists('apiKey', $posted) || array_key_exists('searchEngineId', $posted)) {
+            $allSiteSettings = Settings::loadSiteSettings($this->handle);
 
-            $existingSiteSettings = $stored['siteSettings'] ?? [];
-            $settings = $this->getSettings();
+            $allSiteSettings[$site->uid] = [
+                'apiKey' => (string)($posted['apiKey'] ?? ''),
+                'searchEngineId' => (string)($posted['searchEngineId'] ?? ''),
+            ];
 
-            foreach ($posted['siteSettings'] as $uid => $siteData) {
-                $existingSiteSettings[$uid] = array_merge(
-                    $existingSiteSettings[$uid] ?? [],
-                    $siteData
-                );
-            }
-
-            $settings->siteSettings = $existingSiteSettings;
+            $settings->siteSettings = $allSiteSettings;
+            Settings::saveSiteSettings($this->handle, $allSiteSettings);
         }
 
         return parent::beforeSaveSettings();
@@ -123,6 +138,11 @@ class Plugin extends BasePlugin
         $selectedSite = $this->getSelectedSiteForSettings();
 
         $siteMenuHtml = $this->renderSiteMenuHtml($view, $selectedSite);
+        $siteHiddenInput = '';
+
+        if (count(Craft::$app->getSites()->getAllSites()) > 1) {
+            $siteHiddenInput = (string)Html::hiddenInput('site', $selectedSite->handle);
+        }
 
         $settingsHtml = $view->namespaceInputs(function () use ($readOnly, $selectedSite) {
             if ($readOnly) {
@@ -135,14 +155,11 @@ class Plugin extends BasePlugin
         /** @var Controller $controller */
         $controller = Craft::$app->controller;
 
-        $settingsLayout = $view->doesTemplateExist('settings/plugins/_settings')
-            ? 'settings/plugins/_settings'
-            : 'settings/plugins/_settings.twig';
-
-        return $controller->renderTemplate($settingsLayout, [
+        return $controller->renderTemplate('googlecustomsearch/cp-settings', [
             'plugin' => $this,
-            'settingsHtml' => $siteMenuHtml . $settingsHtml,
+            'settingsHtml' => $siteMenuHtml . $siteHiddenInput . $settingsHtml,
             'readOnly' => $readOnly,
+            'selectedSite' => $selectedSite,
         ]);
     }
 
@@ -159,6 +176,7 @@ class Plugin extends BasePlugin
     private function settingsHtmlForSite(Site $site): ?string
     {
         $settings = $this->getSettings();
+        $settings->siteSettings = Settings::loadSiteSettings($this->handle);
         $siteValues = $settings->getSettingsForSite($site->id);
 
         return Craft::$app->getView()->renderTemplate(
