@@ -3,19 +3,19 @@
 {% do view.registerAssetBundle("imarc\\googlecustomsearch\\assetbundles\\googlecustomsearch\\GooglecustomsearchAsset") %}
 
 {{ forms.autosuggestField({
-    label: "Search Engine ID"|t,
-    instructions: "The Search Engine ID is located in the 'Basics' tab next to 'Details' in the <a href=\"https://www.google.com/cse\">Google Site Search control panel</a>"|t,
+    label: "Search Engine ID"|t('googlecustomsearch'),
+    instructions: "The Search Engine ID is located in the 'Basics' tab next to 'Details' in the <a href=\"https://www.google.com/cse\">Google Site Search control panel</a>"|t('googlecustomsearch'),
     id: 'searchEngineId',
     name: 'searchEngineId',
     value: settings.searchEngineId,
-    suggestEnvVars: true
+    suggestEnvVars: true,
 }) }}
 
 {{ forms.autosuggestField({
-    label: "API Key"|t,
-    instructions: "<strong>Free Tier:</strong> The API Key is located under the 'APIs & auth' tab in the 'Credentials' tab in the <a href=\"https://console.developers.google.com\">Google Developer Console</a><br /><strong>Paid Tier:</strong> The API Key is located under the 'Business' tab in the 'XML & JSON' tab in the <a href=\"http://www.google.com/cse/manage/all\">Control Panel</a>"|t,
+    label: "API Key"|t('googlecustomsearch'),
+    instructions: "<strong>Free Tier:</strong> The API Key is located under the 'APIs & auth' tab in the 'Credentials' tab in the <a href=\"https://console.developers.google.com\">Google Developer Console</a><br /><strong>Paid Tier:</strong> The API Key is located under the 'Business' tab in the 'XML & JSON' tab in the <a href=\"http://www.google.com/cse/manage/all\">Control Panel</a>"|t('googlecustomsearch'),
     id: 'apiKey',
     name: 'apiKey',
     value: settings.apiKey,
-    suggestEnvVars: true
+    suggestEnvVars: true,
 }) }}

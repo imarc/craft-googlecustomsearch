@@ -22,4 +22,6 @@
  */
 return [
     'googlecustomsearch plugin loaded' => 'googlecustomsearch plugin loaded',
+    'API Key is required for {site}.' => 'API Key is required for {site}.',
+    'Search Engine ID is required for {site}.' => 'Search Engine ID is required for {site}.',
 ];
