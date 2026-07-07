@@ -1,0 +1,21 @@
+src/adapters/GoogleCustomSearchAdapter.php
+  s_ea5abe1cbf360e::t_0eefef14ad3632 67-71
+README.md
+  s_ea5abe1cbf360e::t_1f43eac06f6459 118-119
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "102d492d90fc0f804b0ae1d810ac11b4df29d488",
+  "prompts": {},
+  "sessions": {
+    "s_ea5abe1cbf360e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "888c12bd-82c6-45eb-a3e2-261aa9d0f00f",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Kevin Hamer <kevin@imarc.com>"
+    }
+  }
+}
