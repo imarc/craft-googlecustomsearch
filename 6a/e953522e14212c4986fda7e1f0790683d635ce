@@ -1,0 +1,19 @@
+docs/superpowers/specs/2026-07-07-sitesearch-multiprovider-design.md
+  s_ea5abe1cbf360e::t_2a3a69a2349d9c 1-84
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "6ae953522e14212c4986fda7e1f0790683d635ce",
+  "prompts": {},
+  "sessions": {
+    "s_ea5abe1cbf360e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "888c12bd-82c6-45eb-a3e2-261aa9d0f00f",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Kevin Hamer <kevin@imarc.com>"
+    }
+  }
+}
