@@ -1,21 +1,96 @@
 {% import "_includes/forms" as forms %}
 
-{% do view.registerAssetBundle("imarc\\googlecustomsearch\\assetbundles\\googlecustomsearch\\GooglecustomsearchAsset") %}
+{% do view.registerAssetBundle("imarc\\sitesearch\\assetbundles\\sitesearch\\SitesearchAsset") %}
 
-{{ forms.autosuggestField({
-    label: "Search Engine ID"|t('googlecustomsearch'),
-    instructions: "The Search Engine ID is located in the 'Basics' tab next to 'Details' in the <a href=\"https://www.google.com/cse\">Google Site Search control panel</a>"|t('googlecustomsearch'),
-    id: 'searchEngineId',
-    name: 'searchEngineId',
-    value: settings.searchEngineId,
-    suggestEnvVars: true,
+{{ forms.selectField({
+    label: "Search Provider"|t('sitesearch'),
+    instructions: "The search service used for this site."|t('sitesearch'),
+    id: 'provider',
+    name: 'provider',
+    value: settings.provider,
+    toggle: true,
+    options: [
+        { value: 'gcs', label: 'Google Custom Search'|t('sitesearch') },
+        { value: 'vertex', label: 'Google Vertex AI Search'|t('sitesearch') },
+        { value: 'addsearch', label: 'AddSearch'|t('sitesearch') },
+    ],
 }) }}
 
-{{ forms.autosuggestField({
-    label: "API Key"|t('googlecustomsearch'),
-    instructions: "<strong>Free Tier:</strong> The API Key is located under the 'APIs & auth' tab in the 'Credentials' tab in the <a href=\"https://console.developers.google.com\">Google Developer Console</a><br /><strong>Paid Tier:</strong> The API Key is located under the 'Business' tab in the 'XML & JSON' tab in the <a href=\"http://www.google.com/cse/manage/all\">Control Panel</a>"|t('googlecustomsearch'),
-    id: 'apiKey',
-    name: 'apiKey',
-    value: settings.apiKey,
-    suggestEnvVars: true,
-}) }}
+<div id="gcs" class="{{ settings.provider != 'gcs' ? 'hidden' }}">
+    {{ forms.autosuggestField({
+        label: "Search Engine ID"|t('sitesearch'),
+        instructions: "The Search Engine ID is located in the 'Basics' tab in the <a href=\"https://programmablesearchengine.google.com/controlpanel/all\">Programmable Search Engine control panel</a>"|t('sitesearch'),
+        id: 'searchEngineId',
+        name: 'searchEngineId',
+        value: settings.searchEngineId,
+        suggestEnvVars: true,
+    }) }}
+
+    {{ forms.autosuggestField({
+        label: "API Key"|t('sitesearch'),
+        instructions: "A Custom Search JSON API key, created in the <a href=\"https://console.cloud.google.com/apis/credentials\">Google Cloud console credentials page</a>"|t('sitesearch'),
+        id: 'apiKey',
+        name: 'apiKey',
+        value: settings.apiKey,
+        suggestEnvVars: true,
+    }) }}
+</div>
+
+<div id="vertex" class="{{ settings.provider != 'vertex' ? 'hidden' }}">
+    {{ forms.autosuggestField({
+        label: "Project ID"|t('sitesearch'),
+        instructions: "The Google Cloud project ID that contains your Vertex AI Search app."|t('sitesearch'),
+        id: 'projectId',
+        name: 'projectId',
+        value: settings.projectId,
+        suggestEnvVars: true,
+    }) }}
+
+    {{ forms.autosuggestField({
+        label: "Location"|t('sitesearch'),
+        instructions: "The location of your Vertex AI Search app. Defaults to <code>global</code>."|t('sitesearch'),
+        id: 'location',
+        name: 'location',
+        value: settings.location,
+        placeholder: 'global',
+        suggestEnvVars: true,
+    }) }}
+
+    {{ forms.autosuggestField({
+        label: "App / Engine ID"|t('sitesearch'),
+        instructions: "The ID of your Vertex AI Search app (engine), from the Apps list in the <a href=\"https://console.cloud.google.com/gen-app-builder/engines\">AI Applications console</a>."|t('sitesearch'),
+        id: 'engineId',
+        name: 'engineId',
+        value: settings.engineId,
+        suggestEnvVars: true,
+    }) }}
+
+    {{ forms.autosuggestField({
+        label: "Service Account Key File"|t('sitesearch'),
+        instructions: "Path to a service account JSON key file. Leave blank to use Application Default Credentials (e.g. when hosted on Google Cloud)."|t('sitesearch'),
+        id: 'serviceAccountFile',
+        name: 'serviceAccountFile',
+        value: settings.serviceAccountFile,
+        suggestEnvVars: true,
+    }) }}
+</div>
+
+<div id="addsearch" class="{{ settings.provider != 'addsearch' ? 'hidden' }}">
+    {{ forms.autosuggestField({
+        label: "Site Key"|t('sitesearch'),
+        instructions: "Your AddSearch index's public site key, found under Setup &rarr; Keywords &amp; API in the <a href=\"https://app.addsearch.com/\">AddSearch dashboard</a>."|t('sitesearch'),
+        id: 'siteKey',
+        name: 'siteKey',
+        value: settings.siteKey,
+        suggestEnvVars: true,
+    }) }}
+
+    {{ forms.autosuggestField({
+        label: "API Key"|t('sitesearch'),
+        instructions: "Optional secret API key, only needed for private indices."|t('sitesearch'),
+        id: 'addsearchApiKey',
+        name: 'addsearchApiKey',
+        value: settings.addsearchApiKey,
+        suggestEnvVars: true,
+    }) }}
+</div>

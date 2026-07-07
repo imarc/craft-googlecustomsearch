@@ -1,0 +1,27 @@
+{
+    "queries": {
+        "request": [
+            {
+                "startIndex": 1,
+                "count": 2,
+                "totalResults": 240
+            }
+        ]
+    },
+    "items": [
+        {
+            "title": "First Result",
+            "snippet": "Plain snippet one",
+            "htmlSnippet": "Plain <b>snippet</b> one",
+            "link": "https://example.com/one",
+            "pagemap": {
+                "cse_image": [{"src": "https://example.com/one.jpg"}],
+                "cse_thumbnail": [{"src": "https://example.com/one-thumb.jpg"}]
+            }
+        },
+        {
+            "title": "Second Result",
+            "link": "https://example.com/two"
+        }
+    ]
+}

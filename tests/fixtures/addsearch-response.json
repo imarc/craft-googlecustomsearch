@@ -1,0 +1,21 @@
+{
+    "total_hits": 12,
+    "page": 2,
+    "hits": [
+        {
+            "title": "AddSearch Result",
+            "url": "https://example.com/add",
+            "meta_description": "Meta description",
+            "highlight": "An <em>addsearch</em> highlight",
+            "images": {
+                "main": "https://example.com/add.jpg",
+                "capture": "https://example.com/add-capture.jpg"
+            }
+        },
+        {
+            "title": "No Highlight",
+            "url": "https://example.com/plain",
+            "meta_description": "Only meta"
+        }
+    ]
+}

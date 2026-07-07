@@ -1,0 +1,24 @@
+{
+    "totalSize": 57,
+    "results": [
+        {
+            "document": {
+                "derivedStructData": {
+                    "title": "Vertex Result",
+                    "link": "https://example.com/vertex",
+                    "snippets": [
+                        {"snippet": "A <b>vertex</b> snippet &amp; more"}
+                    ]
+                }
+            }
+        },
+        {
+            "document": {
+                "derivedStructData": {
+                    "title": "Bare Result",
+                    "link": "https://example.com/bare"
+                }
+            }
+        }
+    ]
+}

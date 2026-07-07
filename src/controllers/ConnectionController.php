@@ -1,9 +1,9 @@
 <?php
 
-namespace imarc\googlecustomsearch\controllers;
+namespace imarc\sitesearch\controllers;
 
 use craft\web\Controller;
-use imarc\googlecustomsearch\Plugin;
+use imarc\sitesearch\Plugin;
 
 class ConnectionController extends Controller
 {

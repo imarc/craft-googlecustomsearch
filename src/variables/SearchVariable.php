@@ -1,57 +1,30 @@
 <?php
 /**
- * googlecustomsearch plugin for Craft CMS 3.x
+ * Site Search plugin for Craft CMS
  *
- * A Craft plugin for integrating with Google's Custom Search (and Google's Site Search.)
+ * A Craft plugin for site search via Google Custom Search, Google Vertex AI
+ * Search, or AddSearch.
  *
  * @link      https://www.imarc.com
  * @copyright Copyright (c) 2018 Jeff Turcotte
  */
 
-namespace imarc\googlecustomsearch\variables;
+namespace imarc\sitesearch\variables;
 
-use imarc\googlecustomsearch\Plugin;
-
-use Craft;
+use imarc\sitesearch\Plugin;
 
 /**
- * googlecustomsearch Variable
+ * Site Search template variable, available as craft.siteSearch.
  *
- * Craft allows plugins to provide their own template variables, accessible from
- * the {{ craft }} global variable (e.g. {{ craft.googlecustomsearch }}).
- *
- * https://craftcms.com/docs/plugins/variables
- *
- * @author    Jeff Turcotte
- * @package   Googlecustomsearch
- * @since     2.0.0
+ *     {% set results = craft.siteSearch.performSearch(query, page) %}
  */
 class SearchVariable
 {
-    // Public Methods
-    // =========================================================================
-
-    /**
-     * Whatever you want to output to a Twig template can go into a Variable method.
-     * You can have as many variable functions as you want.  From any Twig template,
-     * call it like this:
-     *
-     *     {{ craft.googlecustomsearch.exampleVariable }}
-     *
-     * Or, if your variable requires parameters from Twig:
-     *
-     *     {{ craft.googlecustomsearch.exampleVariable(twigValue) }}
-     *
-     * @param null $optional
-     * @return string
-     */
-
-    public function performSearch($terms, $page=1, $per_page=10, $extra=array())
+    public function performSearch($terms, $page = 1, $per_page = 10, $extra = [])
     {
         return Plugin::getInstance()->search->performSearch($terms, $page, $per_page, $extra);
-
     }
-    
+
     public function setThrowOnFailure(bool $throwOnFailure): bool
     {
         return Plugin::getInstance()->search->setThrowOnFailure($throwOnFailure);

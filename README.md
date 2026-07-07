@@ -1,10 +1,14 @@
-# Google Custom Search plugin for Craft CMS
+# Site Search plugin for Craft CMS
 
-A Craft CMS plugin that incorporates a Google Custom Search into your website.
+A Craft CMS plugin that adds external site search to your website, with three supported providers:
 
-Google offers [free](https://cse.google.com/cse) and [paid](https://www.google.com/work/search/products/gss.html) tiers for accessing their search results.
+- **[Google Programmable Search Engine](https://programmablesearchengine.google.com/)** (Custom Search JSON API)
+- **[Google Vertex AI Search](https://cloud.google.com/enterprise-search)** (Discovery Engine)
+- **[AddSearch](https://www.addsearch.com/)**
 
-*If you are looking for the Craft 2 version of this plugin, [see the `craft2` branch.](https://github.com/imarc/craft-googlecustomsearch/tree/craft2)*
+The provider is chosen per site, so multisite installs can mix providers. All providers return the same result shape, so your templates don't change when you switch.
+
+*This plugin was previously published as `imarc/craft-googlecustomsearch`. See [Upgrading from v3](#upgrading-from-v3) below. If you are looking for the Craft 2 version, [see the `craft2` branch.](https://github.com/imarc/craft-sitesearch/tree/craft2)*
 
 ## Requirements
 
@@ -12,87 +16,108 @@ This plugin requires Craft CMS 3.0.0, 4.x, or 5.x and PHP 8.0+ (PHP 8.2+ recomme
 
 ## Installation
 
-To install the plugin, follow these instructions.
-
 1. Open your terminal and go to your Craft project:
 
         cd /path/to/project
 
 2. Then tell Composer to load the plugin:
 
-        composer require imarc/craft-googlecustomsearch
+        composer require imarc/craft-sitesearch
 
-3. In the Control Panel, go to Settings → Plugins and click the “Install” button for googlecustomsearch.
+3. In the Control Panel, go to Settings → Plugins and click the “Install” button for Site Search.
 
 ## Configuring
 
-You will need a **Search Engine ID** and **API Key** from Google.
+Go to **Settings → Plugins → Site Search**, pick a provider for each site (use the site menu to switch between sites on multisite installs), and fill in that provider's credentials. Every field accepts environment variables (`$MY_VAR`). Credentials can also be set in `config/sitesearch.php` (see [Config file](#config-file)).
 
-**Search Engine ID** - On the [Custom Search Engine Control Panel](http://www.google.com/cse/manage/all), create a new search engine for the site you would like to integrate. Once created, you can retrieve your Search Engine ID from the *Setup* tab.
+### Google Custom Search setup
 
-**API Key** - **If you're using the free tier**, visit the [Google Developers Console](https://console.developers.google.com) and create a project for your search engine. Within your project, you’ll need to enable the *Custom Search API* from the *APIs* tab. Finally, on the *Credentials* tab, you will need to create a Public API access key by selecting the *Create new Key* option and choosing *Server key*. The API Key will now be available. **If you're using a paid tier**, you can find your API key in the [Control Panel](http://www.google.com/cse/manage/all) in the *Business > XML & JSON* tab.
+You will need a **Search Engine ID** and **API Key**.
 
-The credentials can either be added from Craft's plugin settings or within `config/googlecustomsearch.php`.
+1. **Search Engine ID** — On the [Programmable Search Engine control panel](https://programmablesearchengine.google.com/controlpanel/all), create a search engine for the site you would like to integrate. Once created, copy the Search Engine ID from the *Basics* tab.
+2. **API Key** — In the [Google Cloud console](https://console.cloud.google.com/), create (or pick) a project, enable the **Custom Search API** (APIs & Services → Library), then create an **API key** under APIs & Services → Credentials. Restrict the key to the Custom Search API.
 
-On multisite installs, plugin settings can be configured per site from **Settings → Plugins → Google Custom Search**. Use the site menu to switch between sites.
+### Google Vertex AI Search setup
+
+Vertex AI Search (in the Google Cloud console as "AI Applications", formerly Agent Builder / Discovery Engine) provides Google-quality search over a crawled website index.
+
+1. In the [Google Cloud console](https://console.cloud.google.com/), create (or pick) a project and note its **Project ID**.
+2. Enable the **Discovery Engine API** (APIs & Services → Library → "Discovery Engine API").
+3. Go to [AI Applications](https://console.cloud.google.com/gen-app-builder/engines) and create a **Search app**:
+   - Type: **Search**, content: **Website content** (create a website data store pointing at your site's domain; verify the domain for advanced indexing if prompted).
+   - Note the app's **ID** — this is the plugin's **App / Engine ID** — and its **location** (usually `global`).
+4. Create credentials for the plugin:
+   - Go to IAM & Admin → Service Accounts, create a service account (e.g. `craft-site-search`).
+   - Grant it the **Discovery Engine Viewer** role (`roles/discoveryengine.viewer`).
+   - Create a **JSON key** for it (Keys → Add key → JSON) and store the file on your server *outside the web root*.
+   - In the plugin settings, set **Service Account Key File** to the file path (an env var like `$GOOGLE_APPLICATION_CREDENTIALS` works well).
+   - **On Google Cloud hosting** (Cloud Run, GCE, App Engine): leave the key file blank and grant the runtime service account the Discovery Engine Viewer role — the plugin uses Application Default Credentials automatically.
+
+Note: it can take a while after creating the app for the website index to populate.
+
+### AddSearch setup
+
+1. Sign up at [addsearch.com](https://www.addsearch.com/) and create an index for your site (AddSearch crawls it for you).
+2. In the [AddSearch dashboard](https://app.addsearch.com/), find your index's **public Site Key** (Setup → Keywords & API).
+3. Enter the Site Key in the plugin settings. If your index is private, also enter your secret **API Key**.
 
 ### Config file
 
-Single-site (or shared credentials):
-
-```php
-<?php
-return [
-    'apiKey' => getenv('GOOGLE_SEARCH_API_KEY'),
-    'searchEngineId' => getenv('GOOGLE_SEARCH_ENGINE_ID'),
-];
-```
-
-Multisite — per-site values in the config file (keys are site handles):
+Copy `src/config.php` to `config/sitesearch.php` to configure per environment. Keys under `siteSettings` are site handles:
 
 ```php
 <?php
 return [
     'siteSettings' => [
+        // Google Custom Search
         'default' => [
+            'provider' => 'gcs',
             'apiKey' => getenv('GOOGLE_SEARCH_API_KEY'),
             'searchEngineId' => getenv('GOOGLE_SEARCH_ENGINE_ID'),
         ],
+        // Google Vertex AI Search
         'fr' => [
-            'apiKey' => getenv('GOOGLE_SEARCH_API_KEY_FR'),
-            'searchEngineId' => getenv('GOOGLE_SEARCH_ENGINE_ID_FR'),
+            'provider' => 'vertex',
+            'projectId' => getenv('GOOGLE_CLOUD_PROJECT'),
+            'location' => 'global',
+            'engineId' => getenv('VERTEX_SEARCH_ENGINE_ID'),
+            'serviceAccountFile' => getenv('GOOGLE_APPLICATION_CREDENTIALS'),
+        ],
+        // AddSearch
+        'de' => [
+            'provider' => 'addsearch',
+            'siteKey' => getenv('ADDSEARCH_SITE_KEY'),
+            'addsearchApiKey' => getenv('ADDSEARCH_API_KEY'), // optional, private indices only
         ],
     ],
 ];
 ```
 
-You can also index top-level keys by site handle; Craft will resolve them for the current site:
-
-```php
-<?php
-return [
-    'apiKey' => [
-        'default' => getenv('GOOGLE_SEARCH_API_KEY'),
-        'fr' => getenv('GOOGLE_SEARCH_API_KEY_FR'),
-    ],
-    'searchEngineId' => [
-        'default' => getenv('GOOGLE_SEARCH_ENGINE_ID'),
-        'fr' => getenv('GOOGLE_SEARCH_ENGINE_ID_FR'),
-    ],
-];
-```
+The legacy single-site format (top-level `apiKey`/`searchEngineId`, Google Custom Search only) is still supported.
 
 ## Usage
 
-In your twig template, retrieve search results from Google by passing it your search query, which you can then iterate over to display:
+In your twig template, retrieve search results by passing your search query, then iterate over them:
 
-```(twig)
-{% set response = craft.googlecustomsearch.performSearch('google') %}
+```twig
+{% set response = craft.siteSearch.performSearch('query terms') %}
 ```
+
+The response has the same shape for every provider:
+
+| Property | Description |
+| --- | --- |
+| `page`, `perPage`, `start`, `end`, `totalResults` | Pagination info |
+| `results` | Array of results: `title`, `snippet`, `htmlSnippet`, `link`, `image`, `thumbnail` |
+| `raw` | The provider's decoded raw response, for provider-specific data |
+
+Full signature: `performSearch(terms, page = 1, perPage = 10, extra = [])`. `extra` is merged into the provider request (e.g. Vertex [request fields](https://cloud.google.com/generative-ai-app-builder/docs/reference/rest/v1/projects.locations.collections.engines.servingConfigs/search), AddSearch or Custom Search query params).
+
+By default an exception is thrown if the provider returns an error; call `craft.siteSearch.setThrowOnFailure(false)` first to log a warning and get the error response back instead.
 
 Here is a complete example with pagination:
 
-```(twig)
+```twig
 {% extends "_layout" %}
 
 {% set query = craft.request.getParam('q') %}
@@ -100,7 +125,7 @@ Here is a complete example with pagination:
 {% set title = "Search" %}
 
 {% if query %}
-	{% set response = craft.googlecustomsearch.performSearch(query, page) %}
+	{% set response = craft.siteSearch.performSearch(query, page) %}
 	{% set title = query ~ " - Search" %}
 	{% set totalPages = ceil(response.totalResults / response.perPage) %}
 {% endif %}
@@ -146,7 +171,7 @@ Here is a complete example with pagination:
 				{% if totalPages > 1 %}
 					<div class="meta paginator">
 						{% if page > 1 %}
-							<a href="{{ url('search', {q:query, page:(page-1)}) }}" class="prev"></i>Previous</a>
+							<a href="{{ url('search', {q:query, page:(page-1)}) }}" class="prev">Previous</a>
 						{% endif %}
 
 						{% if page < totalPages %}
@@ -166,6 +191,16 @@ Here is a complete example with pagination:
 	</div>
 {% endblock %}
 ```
+
+## Upgrading from v3
+
+v4 renames the plugin from **Google Custom Search** (`imarc/craft-googlecustomsearch`) to **Site Search** (`imarc/craft-sitesearch`):
+
+1. `composer remove imarc/craft-googlecustomsearch && composer require imarc/craft-sitesearch`
+2. Install the **Site Search** plugin in the Control Panel (or `php craft plugin/install sitesearch`). Your existing Google Custom Search settings are copied over automatically during install.
+3. `craft.googlecustomsearch` still works but is deprecated — switch templates to `craft.siteSearch` at your convenience. The result shape is unchanged (plus a new `raw` property).
+4. If you had a `config/googlecustomsearch.php`, rename it to `config/sitesearch.php`.
+5. Uninstall/remove the old plugin if it's still listed.
 
 ## Credits
 

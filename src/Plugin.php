@@ -1,6 +1,6 @@
 <?php
 /**
- * googlecustomsearch plugin for Craft CMS
+ * sitesearch plugin for Craft CMS
  *
  * A Craft plugin for integrating with Google's Custom Search (and Google's Site Search.)
  *
@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2018 Jeff Turcotte
  */
 
-namespace imarc\googlecustomsearch;
+namespace imarc\sitesearch;
 
 use Craft;
 use craft\base\Model;
@@ -21,15 +21,16 @@ use craft\web\Controller;
 use craft\web\Response;
 use craft\web\twig\variables\CraftVariable;
 use craft\web\View;
-use imarc\googlecustomsearch\models\Settings;
-use imarc\googlecustomsearch\controllers\ConnectionController;
-use imarc\googlecustomsearch\services\SearchService;
-use imarc\googlecustomsearch\variables\SearchVariable;
+use imarc\sitesearch\models\Settings;
+use imarc\sitesearch\controllers\ConnectionController;
+use imarc\sitesearch\services\SearchService;
+use imarc\sitesearch\variables\LegacySearchVariable;
+use imarc\sitesearch\variables\SearchVariable;
 use yii\base\Event;
 
 /**
  * @author    Jeff Turcotte
- * @package   Googlecustomsearch
+ * @package   Sitesearch
  * @since     2.0.0
  *
  * @property  SearchService $search
@@ -61,7 +62,10 @@ class Plugin extends BasePlugin
             CraftVariable::EVENT_INIT,
             function (Event $event) {
                 $variable = $event->sender;
-                $variable->set('googlecustomsearch', SearchVariable::class);
+                $variable->set('siteSearch', SearchVariable::class);
+                // Deprecated aliases for templates written against v3
+                $variable->set('googlecustomsearch', LegacySearchVariable::class);
+                $variable->set('googleCustomSearch', LegacySearchVariable::class);
             }
         );
 
@@ -106,13 +110,17 @@ class Plugin extends BasePlugin
         $site = $this->getSelectedSiteForSettings();
         $settings = $this->getSettings();
 
-        if (array_key_exists('apiKey', $posted) || array_key_exists('searchEngineId', $posted)) {
+        if (array_intersect(Settings::SITE_FIELDS, array_keys($posted)) !== []) {
             $allSiteSettings = Settings::loadSiteSettings($this->handle);
 
-            $allSiteSettings[$site->uid] = [
-                'apiKey' => (string)($posted['apiKey'] ?? ''),
-                'searchEngineId' => (string)($posted['searchEngineId'] ?? ''),
-            ];
+            $siteValues = [];
+            foreach (Settings::SITE_FIELDS as $field) {
+                $siteValues[$field] = (string)($posted[$field] ?? '');
+            }
+            if (!in_array($siteValues['provider'], Settings::PROVIDERS, true)) {
+                $siteValues['provider'] = Settings::PROVIDER_GCS;
+            }
+            $allSiteSettings[$site->uid] = $siteValues;
 
             $settings->siteSettings = $allSiteSettings;
             Settings::saveSiteSettings($this->handle, $allSiteSettings);
@@ -155,7 +163,7 @@ class Plugin extends BasePlugin
         /** @var Controller $controller */
         $controller = Craft::$app->controller;
 
-        return $controller->renderTemplate('googlecustomsearch/cp-settings', [
+        return $controller->renderTemplate('sitesearch/cp-settings', [
             'plugin' => $this,
             'settingsHtml' => $siteMenuHtml . $siteHiddenInput . $settingsHtml,
             'readOnly' => $readOnly,
@@ -180,7 +188,7 @@ class Plugin extends BasePlugin
         $siteValues = $settings->getSettingsForSite($site->id);
 
         return Craft::$app->getView()->renderTemplate(
-            'googlecustomsearch/settings',
+            'sitesearch/settings',
             [
                 'site' => $site,
                 'settings' => (object)$siteValues,
@@ -201,6 +209,6 @@ class Plugin extends BasePlugin
             return $view->renderTemplate('_elements/sitemenu', $params);
         }
 
-        return $view->renderTemplate('googlecustomsearch/_sitemenu', $params);
+        return $view->renderTemplate('sitesearch/_sitemenu', $params);
     }
 }

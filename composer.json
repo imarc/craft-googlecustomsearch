@@ -1,6 +1,6 @@
 {
-    "name": "imarc/craft-googlecustomsearch",
-    "description": "A Craft plugin for integrating with Google's Custom Search (and Google's Site Search.)",
+    "name": "imarc/craft-sitesearch",
+    "description": "A Craft plugin for site search via Google Custom Search, Google Vertex AI Search, or AddSearch.",
     "type": "craft-plugin",
     "keywords": [
         "craft",
@@ -8,11 +8,14 @@
         "craftcms",
         "craft-plugin",
         "google custom search",
-        "google site search"
+        "google site search",
+        "vertex ai search",
+        "addsearch",
+        "site search"
     ],
     "support": {
-        "docs": "https://github.com/imarc/craft-googlecustomsearch",
-        "issues": "https://github.com/imarc/craft-googlecustomsearch/issues"
+        "docs": "https://github.com/imarc/craft-sitesearch",
+        "issues": "https://github.com/imarc/craft-sitesearch/issues"
     },
     "license": "Apache-2.0",
     "authors": [
@@ -27,26 +30,36 @@
     ],
     "require": {
         "php": "^8.0",
-        "craftcms/cms": "^3.0.0 || ^4.0.0 || ^5.0.0"
+        "craftcms/cms": "^3.0.0 || ^4.0.0 || ^5.0.0",
+        "google/auth": "^1.30"
+    },
+    "replace": {
+        "imarc/craft-googlecustomsearch": "self.version"
     },
     "autoload": {
         "psr-4": {
-            "imarc\\googlecustomsearch\\": "src/"
+            "imarc\\sitesearch\\": "src/"
         }
     },
     "extra": {
-        "name": "Google Custom Search",
-        "handle": "googlecustomsearch",
+        "name": "Site Search",
+        "handle": "sitesearch",
         "developer": "Imarc",
         "developerUrl": "https://www.imarc.com",
         "hasCpSettings": true,
         "hasCpSection": false,
-        "changelogUrl": "https://github.com/imarc/craft-googlecustomsearch/blob/master/CHANGELOG.md"
+        "changelogUrl": "https://github.com/imarc/craft-sitesearch/blob/master/CHANGELOG.md"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require-dev": {
-        "craftcms/rector": "dev-main"
+        "craftcms/rector": "dev-main",
+        "phpunit/phpunit": "^10.0"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "imarc\\sitesearch\\tests\\": "tests/"
+        }
     },
     "config": {
         "allow-plugins": {

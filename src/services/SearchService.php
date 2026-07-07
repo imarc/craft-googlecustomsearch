@@ -1,44 +1,41 @@
 <?php
 /**
- * googlecustomsearch plugin for Craft CMS 3.x
+ * Site Search plugin for Craft CMS
  *
- * A Craft plugin for integrating with Google's Custom Search (and Google's Site Search.)
+ * A Craft plugin for site search via Google Custom Search, Google Vertex AI
+ * Search, or AddSearch.
  *
  * @link      https://www.imarc.com
  * @copyright Copyright (c) 2018 Jeff Turcotte
  */
 
-namespace imarc\googlecustomsearch\services;
-
-use imarc\googlecustomsearch\Plugin;
+namespace imarc\sitesearch\services;
 
 use Craft;
 use craft\base\Component;
-use samdark\log\PsrMessage;
+use imarc\sitesearch\adapters\AdapterInterface;
+use imarc\sitesearch\adapters\AddSearchAdapter;
+use imarc\sitesearch\adapters\GoogleCustomSearchAdapter;
+use imarc\sitesearch\adapters\VertexSearchAdapter;
+use imarc\sitesearch\models\Settings;
+use imarc\sitesearch\Plugin;
 
 /**
- * SearchService Service
+ * SearchService
  *
- * All of your plugin's business logic should go in services, including saving data,
- * retrieving data, etc. They provide APIs that your controllers, template variables,
- * and other plugins can interact with.
- *
- * https://craftcms.com/docs/plugins/services
- *
- * @author    Jeff Turcotte
- * @package   Googlecustomsearch
- * @since     2.0.0
+ * Resolves the configured provider adapter for the current site and delegates
+ * search requests to it.
  */
 class SearchService extends Component
 {
+    public const ADAPTERS = [
+        Settings::PROVIDER_GCS => GoogleCustomSearchAdapter::class,
+        Settings::PROVIDER_VERTEX => VertexSearchAdapter::class,
+        Settings::PROVIDER_ADDSEARCH => AddSearchAdapter::class,
+    ];
+
     private $throwOnFailure = true;
 
-    /**
-     * Sets the value
-     *
-     * @param array params The parameters of the search request
-     * @return object The raw results of the search request
-     **/
     public function setThrowOnFailure(bool $throwOnFailure): bool
     {
         return $this->throwOnFailure = $throwOnFailure;
@@ -50,53 +47,7 @@ class SearchService extends Component
     }
 
     /**
-     * Sends search request to Google
-     *
-     * @param array params The parameters of the search request
-     * @return object The raw results of the search request
-     **/
-    private function request($params)
-    {
-        $settings = Plugin::getInstance()->getSettings();
-
-        $params = array_merge(
-            [
-                'key' => $settings->getApiKey(),
-                'cx' => $settings->getSearchEngineId()
-            ],
-            $params
-        );
-
-        $client = Craft::createGuzzleClient([
-            'headers' => [
-                'Referer' => Craft::$app->getRequest()->getHostInfo()
-            ]
-        ]);
-
-        try {
-            $response = $client->get('https://www.googleapis.com/customsearch/v1', [
-                'query' => $params
-            ]);
-
-            return json_decode($response->getBody());
-        } catch (\Throwable $e) {
-            // Return the error response if possible
-            if ($e instanceof \GuzzleHttp\Exception\ClientException) {
-                return json_decode($e->getResponse()->getBody());
-            }
-            
-            // Create a similar error structure to what Google would return
-            return (object) [
-                'error' => (object) [
-                    'code' => $e->getCode(),
-                    'message' => $e->getMessage()
-                ]
-            ];
-        }
-    }
-
-    /**
-     * Perform search
+     * Perform search using the current site's configured provider
      *
      * Returns an object with the following properties:
      *
@@ -105,6 +56,7 @@ class SearchService extends Component
      *   start
      *   end
      *   totalResults
+     *   raw
      *   results
      *     title
      *     snippet
@@ -115,103 +67,47 @@ class SearchService extends Component
      *
      * @param string terms The search terms
      * @param integer page The page to return
-     * @param integer per_page How many results to dispaly per page
-     * @param array extra Extra parameters to pass to Google
+     * @param integer per_page How many results to display per page
+     * @param array extra Extra parameters to pass to the provider
      * @return object The results of the search
-     * @throws Exception If error is returned from Google
+     * @throws \Exception If an error is returned from the provider
      **/
     public function performSearch($terms, $page, $per_page, $extra)
     {
-        // Google only allows 10 results at a time
-        $per_page = ($per_page > 10) ? 10 : $per_page;
-
-        $params = [
-            'q' => $terms,
-            'start' => (($page - 1) * $per_page) + 1,
-            'num' => $per_page
-        ];
-
-        if (sizeof($extra)) {
-            $params = array_merge($params, $extra);
-        }
-
-        $response = $this->request($params);
+        $response = $this->getAdapter()->search((string)$terms, (int)$page, (int)$per_page, $extra);
 
         if (isset($response->error)) {
             if ($this->throwOnFailure) {
                 throw new \Exception($response->error->message);
             }
             Craft::warning(
-                'Google Search API returned error: ' . $response->error->message,
+                'Search API returned error: ' . $response->error->message,
                 __METHOD__
             );
-            return $response;
         }
 
-        $request_info = $response->queries->request[0];
-
-        $results = new \stdClass();
-        $results->page = $page;
-        $results->perPage = $per_page;
-        $results->start = $request_info->startIndex;
-        $results->end = ($request_info->startIndex + $request_info->count) - 1;
-        $results->totalResults = $request_info->totalResults ?? 0;
-
-        // Google allows only 100 results to be fetched for a search query over the API
-        // so we cap the totalResults to 100 if it exceeds that number
-        if ($results->totalResults > 100) {
-            $results->totalResults = 100;
-        }
-
-        $results->results = array();
-
-        if (isset($response->items)) {
-            foreach ($response->items as $result) {
-                $results->results[] = (object) array(
-                    'title' => $result->title,
-                    'snippet' => $result->snippet ?? '',
-                    'htmlSnippet' => $result->htmlSnippet ?? '',
-                    'link' => $result->link,
-                    'image' => (isset($result->pagemap->cse_image) && isset($result->pagemap->cse_image[0]) && isset($result->pagemap->cse_image[0]->src)) ? $result->pagemap->cse_image[0]->src : '',
-                    'thumbnail' => (isset($result->pagemap->cse_thumbnail) && isset($result->pagemap->cse_thumbnail[0]) && isset($result->pagemap->cse_thumbnail[0]->src)) ? $result->pagemap->cse_thumbnail[0]->src : '',
-                );
-            }
-        }
-
-        return $results;
+        return $response;
     }
 
     /**
-     * Test connection with an empty search request
+     * Test connection with the current site's configured provider
      *
      * @return array The result of the connection test
      **/
     public function testConnection()
     {
+        return $this->getAdapter()->testConnection();
+    }
+
+    public function getAdapter(?int $siteId = null): AdapterInterface
+    {
+        /** @var Settings $settings */
         $settings = Plugin::getInstance()->getSettings();
+        $siteId ??= Craft::$app->getSites()->getCurrentSite()->id;
+        $siteSettings = $settings->getParsedSettingsForSite($siteId);
 
-        $response = $this->request([
-            'cx' => $settings->getSearchEngineId(),
-            'key' => $settings->getApiKey(),
-            'q' => '',
-        ]);
+        $adapterClass = self::ADAPTERS[$siteSettings['provider']] ?? GoogleCustomSearchAdapter::class;
 
-        $result = [
-            'success' => true
-        ];
-
-        if (!$response) {
-            $result = [
-                'success' => false,
-                'error' => Craft::t('app', 'No response')
-            ];
-        } elseif (isset($response->error)) {
-            $result = [
-                'success' => false,
-                'error' => $response->error->code . ' - ' . $response->error->message
-            ];
-        }
-
-        return $result;
+        return new $adapterClass($siteSettings);
     }
 }
