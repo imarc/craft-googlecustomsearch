@@ -115,6 +115,8 @@ Full signature: `performSearch(terms, page = 1, perPage = 10, extra = [])`. `ext
 
 By default an exception is thrown if the provider returns an error; call `craft.siteSearch.setThrowOnFailure(false)` first to log a warning and get the error response back instead.
 
+**Google Custom Search result limit:** the Custom Search JSON API only serves the first 100 results of a query (and at most 10 per page), so with the `gcs` provider `totalResults` is capped at 100 to keep pagination from linking to pages Google won't serve. Google's uncapped match estimate is still available at `response.raw.queries.request[0].totalResults` if you want to display it (e.g. "About 52,000 results").
+
 Here is a complete example with pagination:
 
 ```twig

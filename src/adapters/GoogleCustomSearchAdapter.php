@@ -64,8 +64,11 @@ class GoogleCustomSearchAdapter implements AdapterInterface
         $results->end = ($requestInfo->startIndex + $requestInfo->count) - 1;
         $results->totalResults = $requestInfo->totalResults ?? 0;
 
-        // Google allows only 100 results to be fetched for a search query over the API
-        // so we cap the totalResults to 100 if it exceeds that number
+        // Google's totalResults is the (estimated) total number of matches, but the
+        // Custom Search JSON API refuses to serve results past the 100th (requests
+        // with start > 91 return a 400). We cap totalResults at 100 so pagination
+        // built from it never links to unfetchable pages. The uncapped estimate is
+        // still available via raw.queries.request[0].totalResults.
         if ($results->totalResults > 100) {
             $results->totalResults = 100;
         }
