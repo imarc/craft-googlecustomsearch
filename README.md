@@ -8,11 +8,11 @@ A Craft CMS plugin that adds external site search to your website, with three su
 
 The provider is chosen per site, so multisite installs can mix providers. All providers return the same result shape, so your templates don't change when you switch.
 
-*This plugin was previously published as `imarc/craft-googlecustomsearch`. See [Upgrading from v3](#upgrading-from-v3) below. If you are looking for the Craft 2 version, [see the `craft2` branch.](https://github.com/imarc/craft-sitesearch/tree/craft2)*
+*This plugin was previously published as `imarc/craft-googlecustomsearch`. See [Upgrading from v2](#upgrading-from-v2) below. If you are looking for the Craft 2 version, [see the `craft2` branch.](https://github.com/imarc/craft-sitesearch/tree/craft2)*
 
 ## Requirements
 
-This plugin requires Craft CMS 3.0.0, 4.x, or 5.x and PHP 8.0+ (PHP 8.2+ recommended for Craft 5).
+This plugin requires Craft CMS 5.x and PHP 8.2+.
 
 ## Installation
 
@@ -194,9 +194,9 @@ Here is a complete example with pagination:
 {% endblock %}
 ```
 
-## Upgrading from v3
+## Upgrading from v2
 
-v4 renames the plugin from **Google Custom Search** (`imarc/craft-googlecustomsearch`) to **Site Search** (`imarc/craft-sitesearch`):
+v3 renames the plugin from **Google Custom Search** (`imarc/craft-googlecustomsearch`) to **Site Search** (`imarc/craft-sitesearch`) and requires Craft CMS 5:
 
 1. `composer remove imarc/craft-googlecustomsearch && composer require imarc/craft-sitesearch`
 2. Install the **Site Search** plugin in the Control Panel (or `php craft plugin/install sitesearch`). Your existing Google Custom Search settings are copied over automatically during install.
