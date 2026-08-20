@@ -12,7 +12,7 @@ The provider is chosen per site, so multisite installs can mix providers. All pr
 
 ## Requirements
 
-This plugin requires Craft CMS 5.x and PHP 8.2+.
+This plugin requires Craft CMS 4.x or 5.x and PHP 8.2+.
 
 ## Installation
 
@@ -196,7 +196,7 @@ Here is a complete example with pagination:
 
 ## Upgrading from v2
 
-v3 renames the plugin from **Google Custom Search** (`imarc/craft-googlecustomsearch`) to **Site Search** (`imarc/craft-sitesearch`) and requires Craft CMS 5:
+v3 renames the plugin from **Google Custom Search** (`imarc/craft-googlecustomsearch`) to **Site Search** (`imarc/craft-sitesearch`) and supports Craft CMS 4 and 5:
 
 1. `composer remove imarc/craft-googlecustomsearch && composer require imarc/craft-sitesearch`
 2. Install the **Site Search** plugin in the Control Panel (or `php craft plugin/install sitesearch`). Your existing Google Custom Search settings are copied over automatically during install.
