@@ -1,0 +1,25 @@
+README.md
+  s_1e42eec22b94c7::t_c6d884c98791e7 15,199
+CHANGELOG.md
+  s_1e42eec22b94c7::t_c6d884c98791e7 7-11
+composer.json
+  s_1e42eec22b94c7::t_c6d884c98791e7 33
+composer.lock
+  s_1e42eec22b94c7::t_931bfdf81fa3b0 7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "37b3bf323f9cd98767eddfd005857cfad24d4218",
+  "prompts": {},
+  "sessions": {
+    "s_1e42eec22b94c7": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0207d-8717-7332-a464-7886d33d5c0e",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Kevin Hamer <kevin@imarc.com>"
+    }
+  }
+}
