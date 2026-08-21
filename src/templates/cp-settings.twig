@@ -1,5 +1,3 @@
-{% requireAdmin false %}
-
 {% extends "_layouts/cp" %}
 {% set title = plugin.name %}
 {% set docTitle = title ~ ' - ' ~ "Plugins"|t('app') %}
@@ -24,10 +22,6 @@
         retainScroll: true,
     },
 ] %}
-
-{% if readOnly %}
-    {% set contentNotice = readOnlyNotice() %}
-{% endif %}
 
 {% block content %}
     {% if not readOnly %}
