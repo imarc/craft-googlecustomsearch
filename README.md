@@ -42,11 +42,15 @@ You will need a **Search Engine ID** and **API Key**.
 Vertex AI Search (in the Google Cloud console as "AI Applications", formerly Agent Builder / Discovery Engine) provides Google-quality search over a crawled website index.
 
 1. In the [Google Cloud console](https://console.cloud.google.com/), create (or pick) a project and note its **Project ID**.
-2. Enable the **Discovery Engine API** (APIs & Services → Library → "Discovery Engine API").
-3. Go to [AI Applications](https://console.cloud.google.com/gen-app-builder/engines) and create a **Search app**:
-   - Type: **Search**, content: **Website content** (create a website data store pointing at your site's domain; verify the domain for advanced indexing if prompted).
+2. Enable the [**Discovery Engine API**](https://console.cloud.google.com/apis/library/discoveryengine.googleapis.com) (APIs & Services → Library → "Discovery Engine API").
+3. In [AI Applications](https://console.cloud.google.com/gen-app-builder/engines), create a data store:
+   - Select **Website content**.
+   - Enter your site's domain as the website URL and complete the data store setup. Verify the domain for advanced indexing if prompted.
+   - Wait for the initial crawl to begin; it can take some time for the website index to populate.
+4. Create a **Search app** and attach the data store:
+   - Select **Site search with AI mode**, then choose the website data store you created.
    - Note the app's **ID** — this is the plugin's **App / Engine ID** — and its **location** (usually `global`).
-4. Create credentials for the plugin:
+5. Create credentials for the plugin:
    - Go to IAM & Admin → Service Accounts, create a service account (e.g. `craft-site-search`).
    - Grant it the **Discovery Engine Viewer** role (`roles/discoveryengine.viewer`).
    - Create a **JSON key** for it (Keys → Add key → JSON) and store the file on your server *outside the web root*.
