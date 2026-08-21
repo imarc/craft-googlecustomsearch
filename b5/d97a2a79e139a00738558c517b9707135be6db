@@ -1,0 +1,21 @@
+README.md
+  s_544e390433b8a1::t_a51ef3bc40fd1a 46-50,53
+  s_544e390433b8a1::t_e6e0b406f29118 51
+  s_544e390433b8a1::t_629be83af93653 45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "b5d97a2a79e139a00738558c517b9707135be6db",
+  "prompts": {},
+  "sessions": {
+    "s_544e390433b8a1": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fdb35d40bffeUvpQjIrsxASpgs",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Kevin Hamer <kevin@imarc.com>"
+    }
+  }
+}
