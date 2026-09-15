@@ -10,7 +10,7 @@ class ConnectionController extends Controller
     /**
      * @var array|bool|int
      */
-    public $allowAnonymous = false;
+    protected array|bool|int $allowAnonymous = false;
 
     public function beforeAction($action): bool
     {
