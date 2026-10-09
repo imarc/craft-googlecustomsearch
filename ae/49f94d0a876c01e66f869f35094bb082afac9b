@@ -1,0 +1,50 @@
+README.md
+  s_6fc1597dbad680::t_832aec04ec3316 214-232
+src/migrations/Install.php
+  s_6fc1597dbad680::t_cbcbe3375d40e6 20-21,58-59
+src/Plugin.php
+  s_6fc1597dbad680::t_cbcbe3375d40e6 46
+  s_6fc1597dbad680::t_832aec04ec3316 195
+src/config.php
+  s_6fc1597dbad680::t_832aec04ec3316 22-23
+tests/SearchServiceTest.php
+  s_6fc1597dbad680::t_f81952a0b08f2b 1-68
+src/models/Settings.php
+  s_6fc1597dbad680::t_cbcbe3375d40e6 37-38,62-63,163-168,196,200-226
+  s_6fc1597dbad680::t_8f60823ade080c 227
+src/migrations/m261006_150000_add_usage.php
+  s_6fc1597dbad680::t_cbcbe3375d40e6 1-29
+CHANGELOG.md
+  s_6fc1597dbad680::t_832aec04ec3316 7-11
+src/services/SearchService.php
+  s_6fc1597dbad680::t_cbcbe3375d40e6 15,78-92,114-126
+src/services/UsageService.php
+  s_6fc1597dbad680::t_cbcbe3375d40e6 1-57
+tests/UsageServiceTest.php
+  s_6fc1597dbad680::t_69627ec6557c1a 23,38,41,48,60,78,102
+  s_6fc1597dbad680::t_832aec04ec3316 1-22,24-37,39-40,42-47,49-59,61-77,79-101,103-121
+phpunit.xml
+  s_6fc1597dbad680::t_8b3551bd044049 4
+src/exceptions/UsageLimitException.php
+  s_6fc1597dbad680::t_cbcbe3375d40e6 1-7
+tests/bootstrap.php
+  s_6fc1597dbad680::t_8b3551bd044049 1-5
+src/templates/settings.twig
+  s_6fc1597dbad680::t_832aec04ec3316 97-120
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ae49f94d0a876c01e66f869f35094bb082afac9b",
+  "prompts": {},
+  "sessions": {
+    "s_6fc1597dbad680": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a11297-781d-72d1-9e69-79c5f562c3c7",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Kevin Hamer <kevin@imarc.com>"
+    }
+  }
+}
