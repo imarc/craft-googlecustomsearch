@@ -94,3 +94,27 @@
         suggestEnvVars: true,
     }) }}
 </div>
+
+<hr>
+<h2>{{ "Monthly Request Limits"|t('sitesearch') }}</h2>
+<p>{{ "Limits apply to this Craft site across all providers and reset each calendar month (UTC). Search attempts and connection tests count, including failures. Blank or 0 disables a limit."|t('sitesearch') }}</p>
+
+{{ forms.autosuggestField({
+    label: "Warning Threshold"|t('sitesearch'),
+    instructions: "Log a warning in Craft once per month when this many requests have been attempted. This does not stop searches."|t('sitesearch'),
+    id: 'monthlyWarningThreshold',
+    name: 'monthlyWarningThreshold',
+    value: settings.monthlyWarningThreshold,
+    errors: settingErrors.monthlyWarningThreshold ?? [],
+    suggestEnvVars: true,
+}) }}
+
+{{ forms.autosuggestField({
+    label: "Hard Cap"|t('sitesearch'),
+    instructions: "Stop sending requests after this many attempts in a month. This is a local safeguard, not a provider billing cap."|t('sitesearch'),
+    id: 'monthlyHardCap',
+    name: 'monthlyHardCap',
+    value: settings.monthlyHardCap,
+    errors: settingErrors.monthlyHardCap ?? [],
+    suggestEnvVars: true,
+}) }}

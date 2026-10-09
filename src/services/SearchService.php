@@ -12,6 +12,7 @@
 namespace imarc\sitesearch\services;
 
 use Craft;
+use imarc\sitesearch\exceptions\UsageLimitException;
 use craft\base\Component;
 use imarc\sitesearch\adapters\AdapterInterface;
 use imarc\sitesearch\adapters\AddSearchAdapter;
@@ -74,7 +75,21 @@ class SearchService extends Component
      **/
     public function performSearch($terms, $page, $per_page, $extra)
     {
-        $response = $this->getAdapter()->search((string)$terms, (int)$page, (int)$per_page, $extra);
+        try {
+            $this->reserveRequest();
+            $response = $this->getAdapter()->search((string)$terms, (int)$page, (int)$per_page, $extra);
+        } catch (UsageLimitException $e) {
+            $response = (object)[
+                'error' => (object)['code' => 429, 'message' => $e->getMessage()],
+                'page' => (int)$page,
+                'perPage' => (int)$per_page,
+                'start' => 0,
+                'end' => 0,
+                'totalResults' => 0,
+                'results' => [],
+                'raw' => null,
+            ];
+        }
 
         if (isset($response->error)) {
             if ($this->throwOnFailure) {
@@ -96,7 +111,19 @@ class SearchService extends Component
      **/
     public function testConnection()
     {
-        return $this->getAdapter()->testConnection();
+        try {
+            $this->reserveRequest();
+            return $this->getAdapter()->testConnection();
+        } catch (UsageLimitException $e) {
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    protected function reserveRequest(): void
+    {
+        $site = Craft::$app->getSites()->getCurrentSite();
+        $settings = Plugin::getInstance()->getSettings()->getParsedSettingsForSite($site->id);
+        (new UsageService())->reserve($site->uid, $settings);
     }
 
     public function getAdapter(?int $siteId = null): AdapterInterface

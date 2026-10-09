@@ -34,6 +34,8 @@ class Settings extends Model
         'serviceAccountFile',
         'siteKey',
         'addsearchApiKey',
+        'monthlyWarningThreshold',
+        'monthlyHardCap',
     ];
 
     /**
@@ -57,6 +59,8 @@ class Settings extends Model
     public string $serviceAccountFile = '';
     public string $siteKey = '';
     public string $addsearchApiKey = '';
+    public string $monthlyWarningThreshold = '';
+    public string $monthlyHardCap = '';
 
     /**
      * Per-site settings indexed by site UID (CP) or site handle (config).
@@ -156,7 +160,12 @@ class Settings extends Model
 
         foreach ($values as $key => $value) {
             if ($key !== 'provider') {
-                $values[$key] = (string)App::parseEnv($value);
+                $parsed = App::parseEnv($value);
+                if (in_array($key, ['monthlyWarningThreshold', 'monthlyHardCap'], true)
+                    && str_starts_with((string)$value, '$') && ($parsed === null || $parsed === false || $parsed === '')) {
+                    throw new \InvalidArgumentException('The request limit environment variable must be set.');
+                }
+                $values[$key] = (string)$parsed;
             }
         }
 
@@ -184,7 +193,36 @@ class Settings extends Model
         return [
             ['provider', 'in', 'range' => self::PROVIDERS],
             [['provider'], 'validateCurrentSiteSettings'],
+            [['monthlyWarningThreshold', 'monthlyHardCap'], 'validateRequestLimit', 'skipOnEmpty' => false],
         ];
+    }
+
+    /** Blank and zero disable a limit; invalid configuration must never disable a cap. */
+    public static function parseRequestLimit(mixed $value): int
+    {
+        $value = trim((string)$value);
+        if ($value === '') {
+            return 0;
+        }
+        if (!preg_match('/^[0-9]+$/D', $value) || filter_var($value, FILTER_VALIDATE_INT) === false) {
+            throw new \InvalidArgumentException('Request limits must be non-negative whole numbers.');
+        }
+
+        return (int)$value;
+    }
+
+    public function validateRequestLimit(string $attribute): void
+    {
+        try {
+            $raw = $this->$attribute;
+            $parsed = App::parseEnv($raw);
+            if (str_starts_with($raw, '$') && ($parsed === null || $parsed === false || $parsed === '')) {
+                throw new \InvalidArgumentException('The request limit environment variable must be set.');
+            }
+            self::parseRequestLimit($parsed);
+        } catch (\InvalidArgumentException $e) {
+            $this->addError($attribute, $e->getMessage());
+        }
     }
 
     public function validateCurrentSiteSettings(): void

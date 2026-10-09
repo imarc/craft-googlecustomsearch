@@ -17,6 +17,8 @@ class Install extends Migration
 
     public function safeUp(): bool
     {
+        (new m261006_150000_add_usage())->safeUp();
+
         $projectConfig = Craft::$app->getProjectConfig();
 
         $legacySiteSettings = $projectConfig->get('plugins.' . self::LEGACY_HANDLE . '.siteSettings')
@@ -53,6 +55,8 @@ class Install extends Migration
 
     public function safeDown(): bool
     {
+        (new m261006_150000_add_usage())->safeDown();
+
         return true;
     }
 }

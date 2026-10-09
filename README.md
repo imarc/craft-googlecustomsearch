@@ -211,3 +211,22 @@ v3 renames the plugin from **Google Custom Search** (`imarc/craft-googlecustomse
 ## Credits
 
 Brought to you by [Imarc](https://www.imarc.com)
+
+### Monthly request safeguards
+
+Each site's settings include optional **Warning Threshold** (`monthlyWarningThreshold`) and **Hard Cap** (`monthlyHardCap`). Configure them in the control panel or in that site's `siteSettings` entry in `config/sitesearch.php`:
+
+```php
+'monthlyWarningThreshold' => '8000',
+'monthlyHardCap' => '10000',
+```
+
+Both accept environment variables; blank or `0` disables the corresponding limit. Use non-negative whole numbers. Set the warning below the cap for advance notice. Defaults leave searches unlimited.
+
+- Usage is stored in the database per Craft site, shared across providers, and resets automatically at the start of each **UTC calendar month**. Cache clears and provider changes do not reset usage. Requests are tracked even while limits are disabled.
+- Each search/page request and connection test reserves one attempt **before** calling the provider. Failed attempts count conservatively. Atomic database updates prevent concurrent requests from exceeding the cap; storage/configuration failures stop the call rather than bypassing the safeguard.
+- The warning is written to Craft's logs (category `sitesearch`) once per site/month when the threshold is reached; it does not send email or stop searches.
+- After the cap, no more provider calls are sent. Searches follow `setThrowOnFailure`: by default an exception is thrown; when disabled, an empty result with `error.code = 429` is returned. Connection tests return `success: false`. Raising or disabling the cap allows requests again without resetting usage.
+- This is **not a billing-account or Google Cloud project cap**. Other sites/installations or callers using the same provider account are not included. Calls made directly to adapters bypass the search service's safeguards.
+
+Deploy the plugin's database migrations before serving requests after upgrading.

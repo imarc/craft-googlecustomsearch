@@ -19,6 +19,8 @@ return [
         //     'projectId' => getenv('GOOGLE_CLOUD_PROJECT'),
         //     'location' => 'global',
         //     'engineId' => getenv('VERTEX_SEARCH_ENGINE_ID'),
+        //     'monthlyWarningThreshold' => '8000', // optional, logs a warning
+        //     'monthlyHardCap' => '10000', // optional, blocks further requests
         //     'serviceAccountFile' => getenv('GOOGLE_APPLICATION_CREDENTIALS'),
         // ],
 

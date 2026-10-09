@@ -43,7 +43,7 @@ class Plugin extends BasePlugin
 
     public bool $hasReadOnlyCpSettings = true;
 
-    public string $schemaVersion = '1.0.0';
+    public string $schemaVersion = '1.1.0';
 
     public $controllerMap = [
         'connection' => ConnectionController::class,
@@ -192,6 +192,7 @@ class Plugin extends BasePlugin
             [
                 'site' => $site,
                 'settings' => (object)$siteValues,
+                'settingErrors' => $settings->getErrors(),
             ]
         );
     }
