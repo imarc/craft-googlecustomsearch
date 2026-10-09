@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## Unreleased
 
 ### Added
+- Best-effort email notifications to active Craft administrators when a monthly warning threshold is reached
 - Configurable per-site monthly warning thresholds and hard caps, with persistent atomic request tracking for searches and connection tests
 
 ## 3.0.1 - 2026-08-20

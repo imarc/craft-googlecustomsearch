@@ -34,7 +34,7 @@ class UsageService extends Component
             throw new UsageLimitException('The monthly site search request limit has been reached.');
         }
 
-        // Claim the warning atomically so concurrent requests log it only once.
+        // Claim the warning atomically so concurrent requests notify only once.
         if ($warning > 0 && $db->createCommand()->update(self::TABLE, ['warned' => true], [
             'and', $key, ['warned' => false], ['>=', 'requests', $warning],
         ])->execute() > 0) {
@@ -42,7 +42,13 @@ class UsageService extends Component
                 'Site Search monthly warning threshold (%d requests) reached for site %s in %s (UTC).',
                 $warning, $siteUid, $key['month']
             ));
+            $this->notifyWarning($siteUid, $key['month'], $warning, $cap);
         }
+    }
+
+    protected function notifyWarning(string $siteUid, string $month, int $threshold, int $cap): void
+    {
+        (new UsageNotificationService())->sendWarning($siteUid, $month, $threshold, $cap);
     }
 
     protected function currentMonth(): string

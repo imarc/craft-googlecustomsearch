@@ -46,6 +46,7 @@ class UsageServiceTest extends TestCase
         $this->usage->reserve('site-a', []);
         $this->usage->reserve('site-a', ['monthlyHardCap' => '0']);
         $this->assertSame(2, $this->requestCount());
+        $this->assertSame([], $this->usage->notifications);
         $this->expectException(UsageLimitException::class);
         $this->usage->reserve('site-a', ['monthlyHardCap' => '1']);
     }
@@ -59,6 +60,7 @@ class UsageServiceTest extends TestCase
         $this->usage->reserve('site-a', $settings);
         $this->assertSame(1, $this->requestCount());
         $this->assertCount(3, $this->usage->warnings);
+        $this->assertCount(3, $this->usage->notifications);
     }
 
     public function testSeparateServiceInstancesShareTheCap(): void
@@ -76,6 +78,9 @@ class UsageServiceTest extends TestCase
         }
         $this->assertCount(1, $this->usage->warnings);
         $this->assertSame(4, $this->requestCount());
+        $this->assertSame([[
+            'siteUid' => 'site-a', 'month' => '2026-10', 'threshold' => 2, 'cap' => 0,
+        ]], $this->usage->notifications);
     }
 
     public function testLimitParsing(): void
@@ -108,6 +113,12 @@ class TestUsageService extends UsageService
 {
     public string $month = '2026-10';
     public array $warnings = [];
+    public array $notifications = [];
+
+    protected function notifyWarning(string $siteUid, string $month, int $threshold, int $cap): void
+    {
+        $this->notifications[] = compact('siteUid', 'month', 'threshold', 'cap');
+    }
 
     protected function currentMonth(): string
     {

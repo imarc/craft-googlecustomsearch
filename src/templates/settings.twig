@@ -101,7 +101,7 @@
 
 {{ forms.autosuggestField({
     label: "Warning Threshold"|t('sitesearch'),
-    instructions: "Log a warning in Craft once per month when this many requests have been attempted. This does not stop searches."|t('sitesearch'),
+    instructions: "Log a warning and attempt to email all active Craft administrators once per month when this many requests have been attempted. This does not stop searches."|t('sitesearch'),
     id: 'monthlyWarningThreshold',
     name: 'monthlyWarningThreshold',
     value: settings.monthlyWarningThreshold,
