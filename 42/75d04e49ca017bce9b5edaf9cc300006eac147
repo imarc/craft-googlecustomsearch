@@ -1,0 +1,32 @@
+src/services/UsageNotificationService.php
+  s_6fc1597dbad680::t_c3955e0702ded4 1-73
+src/services/UsageService.php
+  s_6fc1597dbad680::t_c3955e0702ded4 37,45,49-51
+  s_6fc1597dbad680::t_5417dc0ad0fa7d 52-53
+tests/UsageServiceTest.php
+  s_6fc1597dbad680::t_c3955e0702ded4 49,63,81-83,116-121
+src/templates/settings.twig
+  s_6fc1597dbad680::t_c3955e0702ded4 104
+CHANGELOG.md
+  s_6fc1597dbad680::t_c3955e0702ded4 10
+README.md
+  s_6fc1597dbad680::t_c3955e0702ded4 228
+tests/UsageNotificationServiceTest.php
+  s_6fc1597dbad680::t_c3955e0702ded4 1-86
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4275d04e49ca017bce9b5edaf9cc300006eac147",
+  "prompts": {},
+  "sessions": {
+    "s_6fc1597dbad680": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a11297-781d-72d1-9e69-79c5f562c3c7",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Kevin Hamer <kevin@imarc.com>"
+    }
+  }
+}
